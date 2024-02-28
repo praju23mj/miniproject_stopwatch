@@ -1,35 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 
 function App() {
-  const [time, setTime] = useState(0);
-  const [timerOn, setTimerOn] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
     let interval;
-
-    if (timerOn) {
+    if (isRunning) {
       interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + 1);
       }, 1000);
-    } else {
-      clearInterval(interval);
     }
-
     return () => clearInterval(interval);
-  }, [timerOn]);
-
-  const startTimer = () => {
-    setTimerOn(true);
-  };
-
-  const stopTimer = () => {
-    setTimerOn(false);
-  };
-
-  const resetTimer = () => {
-    setTime(0);
-    setTimerOn(false);
-  };
+  }, [isRunning]);
 
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
@@ -37,21 +21,22 @@ function App() {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
+  const reset = () => {
+    setIsRunning(false);
+    setElapsedTime(0);
+  };
+  const startStopTimer = () => {
+    setIsRunning(!isRunning);
+  };
+
   return (
-    <div className="App">
+    <div>
       <h1>Stopwatch</h1>
-      <div className="display">{formatTime(time)}</div>
-      <div className="buttons">
-        {!timerOn ? (
-          <button onClick={startTimer}>Start</button>
-        ) : (
-          <button onClick={stopTimer}>Stop</button>
-        )}
-        <button onClick={resetTimer}>Reset</button>
-      </div>
+      <p>{formatTime(elapsedTime)}</p>
+      <button onClick={startStopTimer}>{isRunning ? "Stop" : "Start"}</button>
+      <button onClick={reset}>Reset</button>
     </div>
   );
 }
 
 export default App;
-    
